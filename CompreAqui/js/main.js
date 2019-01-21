@@ -15,9 +15,9 @@ function getTotal(list){
     //para fazer os calculos
     for (var key in list){
         total += list[key].value * list[key].amount;
-
     }
-    return total;
+    document.getElementById("totalValue").innerHTML = formatValue(total);
+    
 }
 
 
@@ -27,11 +27,13 @@ function setList(list){
     var table = '<thead><tr><td>Descrição</td><td>Quantidade</td><td>Valor</td><td>Ação</td></tr></thead><tbody>';
     for(var key in list){
         table += '<tr><td>'+ formatDesc(list[key].desc) +
-        '</td><td>'+ list[key].amount +'</td><td>'+ formatValue(list[key].value) +
+        '</td><td>'+formatAmoutn(list[key].amount) +'</td><td>'+ formatValue(list[key].value) +
         '</td><td><button class="btn btn-primary" onclick="setUpdate('+key+');" >Edit</button>  <button class="btn btn-danger" onclick="deleteData('+key+');" >Delete </button></td></tr>';
     }
     table += '</tbody>';
     document.getElementById("listTable").innerHTML = table;
+    getTotal(list);
+    saveListStorage(list);
 }
     //função para formato da descrição
     function formatDesc(desc){
@@ -47,10 +49,18 @@ function setList(list){
         str= str.replace(".",",");
         str= "R$ " + str;
         return str;
-    }    
+    }  
+    //função para os Quantidade
+    function formatAmoutn(amount){
+        return parseInt(amount);
+    }      
 
     //funcção para adicionar produtos
     function addData(){
+        //faz a validação dos dados
+        if(!validation()){
+            return;
+        }
         var desc = document.getElementById("desc").value;
         var amount = document.getElementById("amount").value;
         var value = document.getElementById("value").value;
@@ -86,10 +96,16 @@ function setList(list){
 
        
        document.getElementById("inputIDUpdate").innerHTML = "";
+       document.getElementById("errors").style.display = "none";
+            
     }
 
     //funcao para atualizar os dados
     function updateData(){
+        //faz a validação dos dados
+        if(!validation()){
+            return;
+        }
         var id = document.getElementById("idUpdate").value;
         var desc = document.getElementById("desc").value;
         var amount = document.getElementById("amount").value;
@@ -120,6 +136,65 @@ function setList(list){
         }
     }
 
+    function validation(){
+        //valida a descricao, quantidade, valor
+        var desc = document.getElementById("desc").value;
+        var amount = document.getElementById("amount").value;
+        var value = document.getElementById("value").value;
+        var errors = "";
+
+        //valida se está vazio e se os valores são validos
+        if(desc === ""){
+            errors += '<p>Informe o nome do produto! </p>';
+        }
+        if(amount === ""){
+            errors += '<p>Informe a quantidade de produto! </p>';
+        }else if(amount != parseInt(amount)){
+            errors += '<p>Informe um valor válido! </p>';
+        }
+        if(value === ""){
+            errors += '<p>Informe o valor do produto! </p>';
+        }else if(value != parseFloat(value)){
+            errors += '<p>Informe um valor válido! </p>';
+        }
+
+        //verifica se existe erro
+        if(errors != ""){
+            document.getElementById("errors").style.display = "block";
+            document.getElementById("errors").style.backgroundColor = "rgba(85, 85, 85, 0.3)";
+            document.getElementById("errors").style.color = "white";
+            document.getElementById("errors").style.padding = "10px";
+            document.getElementById("errors").style.margin = "20px";
+            document.getElementById("errors").style.borderRadius = "13px";
+            document.getElementById("errors").innerHTML = " <h3>Erro: </h3>" + errors;
+            return 0;
+        }else{
+            return 1;
+        }
+    }
+    // funcao para limpar lista
+    function deleteList(){
+        if(confirm("Deseja apagar a lista")){
+            list = [];
+            setList(list);
+        }
+    }
         
-setList(list);
-console.log(getTotal(list));
+    //função para salvar no localStorage os dadso
+    function saveListStorage(list){
+        //tranforma o array em string
+        var jsonStr = JSON.stringify(list);
+        localStorage.setItem("list",jsonStr);
+
+    }
+    //funcao de inicialização
+    function initListStorage(){
+        //se existir ele vai atualizar
+        var testeList = localStorage.getItem("list");
+        if(testeList){
+            //transforma de string para array
+            list = JSON.parse(testeList);
+        }
+        setList(list);
+    }
+    initListStorage();

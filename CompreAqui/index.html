@@ -40,16 +40,32 @@
                     <button type="submit" class="btn btn-default" onclick="resetForm();">Cancelar</button>
                    </span>
 
-              <button id="btnAdd" type="submit" class="btn btn-primary" onclick="addData();">Adicionar Produto</button>
+                   <span id="btnAdd">
+                      <button type="submit" class="btn btn-primary" onclick="addData();">Adicionar Produto</button>
+                      <button type="submit" class="btn btn-warning" onclick="resetForm();">Limpar</button>
+                      <button type="submit" class="btn btn-danger" onclick="deleteList();">Deletar Lista</button>
+
+                   </span>
+                   
             <!-- </form> -->
             
           </div>
 
+          <div id = "errors" style="display:none"></div>
           <!-- Tabela de Produtos -->
           <table id ="listTable" class="table">
            
           </table>
          </div>     
+
+         <nav class="navbar navbar-default navbar-fixed-bottom">
+           <div class="container">
+             <h4 class="text-center text-success"> Total da Compra: 
+               <span id="totalValue"> R$ 0.00
+             </span></h4>
+           </div>
+         </nav>
+        
 
    <script src="js/config.js"></script>
    <script src="js/main.js"></script>            
